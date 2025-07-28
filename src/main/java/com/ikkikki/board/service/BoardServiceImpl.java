@@ -1,14 +1,13 @@
 package com.ikkikki.board.service;
 
-import com.ikkikki.board.dto.BoardDTO;
-import com.ikkikki.board.dto.PageRequestDTO;
-import com.ikkikki.board.dto.PageResponseDTO;
-import com.ikkikki.board.entity.Board;
-import com.ikkikki.board.projection.dto.BoardWithReplyCount;
+import com.ikkikki.board.domain.dto.BoardDTO;
+import com.ikkikki.board.domain.dto.PageRequestDTO;
+import com.ikkikki.board.domain.dto.PageResponseDTO;
+import com.ikkikki.board.domain.entity.Board;
+import com.ikkikki.board.domain.projection.dto.BoardWithReplyCount;
 import com.ikkikki.board.repository.BoardRepository;
 import com.ikkikki.board.repository.ReplyRepository;
 import lombok.Data;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +23,10 @@ public class BoardServiceImpl implements BoardService{
     return boardRepository.save(toEntity(boardDTO)).getBno();
   }
 
-  @Override
+  @Override // 리스트에서의 검색
   public PageResponseDTO<BoardDTO, BoardWithReplyCount> getList(PageRequestDTO pageRequestDTO) {
     return new PageResponseDTO<>(
-            boardRepository.getBoardWithReplyCount2(pageRequestDTO.getPageable(Sort.by(Sort.Direction.DESC,"bno" )))
+            boardRepository.searchPage(pageRequestDTO.getType(), pageRequestDTO.getKeyword(), pageRequestDTO.getPageable(Sort.by(Sort.Direction.DESC, "bno")))
             , this::projectionToDTO);
   }
 

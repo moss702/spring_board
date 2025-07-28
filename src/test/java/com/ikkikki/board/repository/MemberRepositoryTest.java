@@ -1,6 +1,6 @@
 package com.ikkikki.board.repository;
 
-import com.ikkikki.board.entity.Member;
+import com.ikkikki.board.domain.entity.Member;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

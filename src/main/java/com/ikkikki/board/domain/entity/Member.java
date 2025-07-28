@@ -1,6 +1,5 @@
-package com.ikkikki.board.entity;
+package com.ikkikki.board.domain.entity;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.ikkikki.board.dto;
+package com.ikkikki.board.domain.dto;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;

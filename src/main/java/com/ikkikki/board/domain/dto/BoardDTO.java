@@ -1,4 +1,4 @@
-package com.ikkikki.board.dto;
+package com.ikkikki.board.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

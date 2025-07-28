@@ -1,4 +1,4 @@
-package com.ikkikki.board.entity;
+package com.ikkikki.board.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

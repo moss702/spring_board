@@ -34,7 +34,6 @@ dependencies {
 
   compileOnly 'org.projectlombok:lombok'
   annotationProcessor 'org.projectlombok:lombok'
-
   testCompileOnly 'org.projectlombok:lombok'
   testAnnotationProcessor 'org.projectlombok:lombok'
 
@@ -51,6 +50,10 @@ dependencies {
   annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
   annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 
+  //mapStruct 관련
+  implementation 'org.mapstruct:mapstruct:1.6.3'
+  annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+  annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 }
 
 configurations {
@@ -58,16 +61,20 @@ configurations {
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
   }
 }
-
 tasks.named('test') {
   useJUnitPlatform()
 }
-
-def generated = "$buildDir/generated/querydsl"
+def generated = "$projectDir/src/main/generated"
 
 sourceSets {
-  main.java.srcDirs += generated
+  main {
+    java {
+      srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+    }
+  }
 }
+
+compileJava.dependsOn('clean')
 
 tasks.withType(JavaCompile) {
   options.annotationProcessorGeneratedSourcesDirectory = file(generated)

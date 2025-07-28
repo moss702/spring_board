@@ -1,8 +1,7 @@
 package com.ikkikki.board.service;
 
-import com.ikkikki.board.dto.BoardDTO;
-import com.ikkikki.board.dto.PageRequestDTO;
-import com.ikkikki.board.entity.Board;
+import com.ikkikki.board.domain.dto.BoardDTO;
+import com.ikkikki.board.domain.dto.PageRequestDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

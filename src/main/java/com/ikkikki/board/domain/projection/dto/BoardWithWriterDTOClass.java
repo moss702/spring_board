@@ -1,7 +1,7 @@
-package com.ikkikki.board.projection.dto;
+package com.ikkikki.board.domain.projection.dto;
 
-import com.ikkikki.board.entity.Board;
-import com.ikkikki.board.entity.Member;
+import com.ikkikki.board.domain.entity.Board;
+import com.ikkikki.board.domain.entity.Member;
 import lombok.Getter;
 
 @Getter

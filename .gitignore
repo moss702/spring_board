@@ -38,3 +38,6 @@ out/
 
 secret
 /secret/
+
+## query dsl generated
+**/generated

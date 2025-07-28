@@ -1,11 +1,11 @@
 package com.ikkikki.board.service;
 
-import com.ikkikki.board.dto.BoardDTO;
-import com.ikkikki.board.dto.PageRequestDTO;
-import com.ikkikki.board.dto.PageResponseDTO;
-import com.ikkikki.board.entity.Board;
-import com.ikkikki.board.entity.Member;
-import com.ikkikki.board.projection.dto.BoardWithReplyCount;
+import com.ikkikki.board.domain.dto.BoardDTO;
+import com.ikkikki.board.domain.dto.PageRequestDTO;
+import com.ikkikki.board.domain.dto.PageResponseDTO;
+import com.ikkikki.board.domain.entity.Board;
+import com.ikkikki.board.domain.entity.Member;
+import com.ikkikki.board.domain.projection.dto.BoardWithReplyCount;
 
 public interface BoardService {
   Long register(BoardDTO boardDTO);
@@ -27,6 +27,7 @@ public interface BoardService {
             .writer(Member.builder().email(dto.getWriterEmail()).build())
             .build();
   }
+
   default BoardDTO toDTO(Board entity, Member member, Long replyCnt) {
     return BoardDTO.builder()
             .bno(entity.getBno())
@@ -42,13 +43,13 @@ public interface BoardService {
   }
   default BoardDTO projectionToDTO(BoardWithReplyCount entity) {
     return BoardDTO.builder()
-            .bno(entity.getBoard().getBno())
-            .title(entity.getBoard().getTitle())
-            .content(entity.getBoard().getContent())
-            .regDate(entity.getBoard().getRegDate())
-            .modDate(entity.getBoard().getModDate())
-            .writerEmail(entity.getBoard().getWriter().getName())
-            .replyCount(entity.getReplyCount())
+            .bno(entity.board().getBno())
+            .title(entity.board().getTitle())
+            .content(entity.board().getContent())
+            .regDate(entity.board().getRegDate())
+            .modDate(entity.board().getModDate())
+            .writerEmail(entity.board().getWriter().getName())
+            .replyCount(entity.replyCount())
             .build();
   }
 }
