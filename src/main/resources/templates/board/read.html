@@ -99,11 +99,11 @@
     const bno = [[${dto.bno}]];
     const listGroup = document.querySelector(".replyList");
 
+    // ========== loadJSONData : listGroup JSON 형태로 출력
     const loadJSONData = () => {
       fetch(`/replies/board/${bno}`)
           .then(resp => resp.json()) // JSON으로 가져옴
           .then(arr => {
-
             document.querySelector(".replyCount").innerHTML = "Reply Count" + arr.length;
             listGroup.innerHTML = arr.map(r => {
               console.log(r)
@@ -120,11 +120,12 @@
             }).join("")
           })
     };
+
+    // ========== replyCount 버튼 클릭시 댓글리스트 그룹 보여줌
     document.querySelector(".replyCount").addEventListener("click", loadJSONData);
 
-    document.querySelector(".addReply").addEventListener("click", () => {     // addReply 버튼 클릭시 이벤트
-
-
+    // ========== addReply 버튼 클릭시 이벤트
+    document.querySelector(".addReply").addEventListener("click", () => {
       // 입력창 초기화
       document.querySelectorAll(".modal input[type-text]").forEach(i => i.value= '');
 
@@ -162,6 +163,33 @@
       myModal.show();
     });
   });
+
+  // ========== 댓글 삭제
+  document.querySelector(".replyList").addEventListener("click", function (){
+    const card = document.querySelector(".card-body");
+
+    // 1. 내가 선택한 rno 특정하기
+    // 2. 모달 띄우기 * 수정, 삭제 버튼만 띄우기, 1번에서 가져온 rno 값 덮어씌우기
+    // 3. 컨트롤러에서 처리
+    //
+    // const rno = ${r.rno}
+    // console.log(card.dataset.rno);
+    // const rno = e.target.closest(replyList)
+    console.log( rno + "번 댓글 클릭");
+
+    // 2. 모달 띄우기
+    document.querySelectorAll(".modal input[type-text]").forEach(i => i.value= '' /*여기에 기존 값 집어넣기*/);
+    [...document.querySelectorAll(".modal-footer button")]
+        .filter(b => {b.classList.add('d-none'); return b.matches('.replyClose, .replyModify, replyRemove')})
+        .forEach(b => b.classList.remove('d-none'));
+
+
+  });
+
+    // document.querySelector(input[name=replyer]).value(this.)
+
+
+
 
 </script>
 
