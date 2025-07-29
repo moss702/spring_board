@@ -24,12 +24,29 @@ public class ReplyController {
     return ResponseEntity.ok(replyService.getList(bno));
   }
 
-  @PostMapping("")
+  @PostMapping
   public ResponseEntity<?> create(@RequestBody ReplyDTO dto){
     log.info(dto);
-    // 3.
-    return ResponseEntity.ok(replyService.register(dto));
-    // Long타입 제네릭으로 리턴
+    return ResponseEntity.ok(replyService.register(dto)); // Long타입 제네릭으로 리턴
   }
+
+  // =================================
+  @PutMapping("{rno}")
+  public ResponseEntity<?> update(@RequestBody ReplyDTO dto){
+    replyService.modify(dto);
+    return ResponseEntity.ok(dto.getRno());
+  }
+
+  @GetMapping("{rno}")
+  public ResponseEntity<?> get(@PathVariable("rno") Long rno){
+    return ResponseEntity.ok(replyService.get(rno));
+  } // 댓글 하나 찾기
+
+  @DeleteMapping("{rno}")
+  public ResponseEntity<?> delete(@PathVariable("rno") Long rno){
+    replyService.remove(rno);
+    return ResponseEntity.ok(rno);  // rno 댓글이 삭제되었다는 알람을 위해 리턴해줌
+  }
+
 }
 
