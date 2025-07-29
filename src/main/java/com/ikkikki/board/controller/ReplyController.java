@@ -23,5 +23,13 @@ public class ReplyController {
   public ResponseEntity<?> getList(@PathVariable("bno") Long bno){
     return ResponseEntity.ok(replyService.getList(bno));
   }
+
+  @PostMapping("")
+  public ResponseEntity<?> create(@RequestBody ReplyDTO dto){
+    log.info(dto);
+    // 3.
+    return ResponseEntity.ok(replyService.register(dto));
+    // Long타입 제네릭으로 리턴
+  }
 }
 

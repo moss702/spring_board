@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
   <th:block th:fragment="content">
+
     <h1>Guestbook Read Page</h1>
 
     <div class="form-group">
@@ -39,81 +40,129 @@
 
     <a th:href="@{/board/modify(page = ${requestDto.page}, size = ${requestDto.size}, bno= ${dto.bno}, type=${requestDto.type}, keyword=${requestDto.keyword})}" class="btn btn-primary mt-3">modify</a>
     <a th:href="@{/board/list(page = ${requestDto.page}, size = ${requestDto.size}, type=${requestDto.type}, keyword=${requestDto.keyword})}" class="btn btn-primary mt-3">List</a>
+
+    <div class="mt-4">
+      <h5><button class="badge bg-info addReply text-white border-0">Add Reply</button></h5>
+      <h5><button class="badge bg-secondary replyCount text-decoration-none text-white p-2 border-0">replyCount [[${dto.replyCount}]]</button></h5>
+      <ul class="list-group replyList">
+      </ul>
+    </div>
+
   </th:block>
 </th:block>
 
-<script>
-  // 전역변수로 counter 초기값 : 0
-  // 10 ** 3 : 10의 3제곱 : 1000
-  // 어씽크 함수: 의도적으로 딜레이 줌
+<!-- The Modal -->
+<div class="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
 
-  // let counter = 0;
-  // function callLocal(n, cb) {
-  //   const add = 10 ** n;
-  //   counter += add;
-  //   console.log(`[local] 10^${n} = ${add} -> counter : ${counter}`);
-  //   if(cb) cb();
-  // }
-  //
-  // function callAsync(n, cb){
-  //   const add = 10 ** n;
-  //   const delay = Math.floor(Math.random() * 1000); // 0~999 난수
-  //
-  //   setTimeout(() => {
-  //     counter += add;
-  //     console.log(`[async] 10^${n} = ${add} -> counter : ${counter}, delay : ${delay}ms`);
-  //     if(cb) cb();
-  //   }, delay);
-  // }
-  // // (() => {callAsync(0);}) ();
-  // callAsync(0, () => {
-  //   callAsync(1, () => {
-  //     callAsync(2, () => {
-  //       callAsync(3, () => {
-  //         callAsync(4, () => {
-  //           callLocal(5, () => {
-  //             callLocal(6, () => {
-  //               callLocal(7, () => {
-  //                 callLocal(8, () => {
-  //                   callLocal(9, () => {
-  //                     console.log("마지막!")
-  //                   })
-  //                 })
-  //               })
-  //             })
-  //           })
-  //         })
-  //       })
-  //     })
-  //   })
-  // });
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Reply</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
 
-  // $.ajax({
-  //   success: (data) => {
-  //     $.ajax({
-  //       success: (data) => {
-  //
-  //       }
-  //     })
-  //   }
-  // })
-  // $.ajax({
-  //   success: (data) => {},  // 여기서의 리턴값이 아래 녀석들의 값이 된다. == jQuery 스타일의 체인
-  //   error: (error) => {},
-  //   finally: (data) => {}
-  // })
-  // .done((data) => {
-  //
-  // })
-  // .fail(error => {
-  //
-  // })
-  // .always((data) => {
-  //
-  // })
-  // .done((data) => {
-  //
-  // })
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="form-group">
+          <input class="form-control" type="text" name="text" placeholder="replyTest...">
+        </div>
+        <div class="form-group my-3">
+          <input class="form-control" type="text" name="replyer" placeholder="replyer...">
+        </div>
+        <input type="hidden" name="rno">
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger replyRemove" >Remove</button>
+        <button type="button" class="btn btn-warning replyModify">Modify</button>
+        <button type="button" class="btn btn-primary replySave">Save</button>
+        <button type="button" class="btn btn-outline-secondary replyClose" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/dayjs.min.js" integrity="sha512-FwNWaxyfy2XlEINoSnZh1JQ5TRRtGow0D6XcmAWmYCRgvqOUTnzCxPc9uF35u5ZEpirk1uhlPVA19tflhvnW1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/plugin/relativeTime.min.js" integrity="sha512-MVzDPmm7QZ8PhEiqJXKz/zw2HJuv61waxb8XXuZMMs9b+an3LoqOqhOEt5Nq3LY1e4Ipbbd/e+AWgERdHlVgaA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/locale/ko.min.js" integrity="sha512-ycjm4Ytoo3TvmzHEuGNgNJYSFHgsw/TkiPrGvXXkR6KARyzuEpwDbIfrvdf6DwXm+b1Y+fx6mo25tBr1Icg7Fw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script th:inline="javascript">
+  window.addEventListener("load", e => {
+    // dayjs 전역설정
+    dayjs.extend(window.dayjs_plugin_relativeTime);
+    dayjs.locale('ko')
+
+    const myModal = new bootstrap.Modal(document.querySelector('.modal'))   // 모달 보이기
+    const bno = [[${dto.bno}]];
+    const listGroup = document.querySelector(".replyList");
+
+    const loadJSONData = () => {
+      fetch(`/replies/board/${bno}`)
+          .then(resp => resp.json()) // JSON으로 가져옴
+          .then(arr => {
+
+            document.querySelector(".replyCount").innerHTML = "Reply Count" + arr.length;
+            listGroup.innerHTML = arr.map(r => {
+              console.log(r)
+              return `
+                <li class="card list-group-item" data-rno="${r.rno}">
+                  <b>${r.rno}</b>
+                  <div class="card-body">
+                    <h5 class="card-title"> ${r.text}</h5>
+                    <h5 class="card-subtitle mb-2 text-muted">${r.replyer}</h5>
+                    <p class="card-text"> ${dayjs(r.regDate).fromNow()}</p>
+                  </div>
+                </li>
+              `;
+            }).join("")
+          })
+    };
+    document.querySelector(".replyCount").addEventListener("click", loadJSONData);
+
+    document.querySelector(".addReply").addEventListener("click", () => {     // addReply 버튼 클릭시 이벤트
+
+
+      // 입력창 초기화
+      document.querySelectorAll(".modal input[type-text]").forEach(i => i.value= '');
+
+      // document.querySelectorAll(".modal-footer button").forEach(b =>b.classList.add('d-none'));
+      [...document.querySelectorAll(".modal-footer button")]
+          .filter(b => {b.classList.add('d-none'); return b.matches('.replyClose, .replySave')})
+          .forEach(b => b.classList.remove('d-none'));
+      // [...document.querySelectorAll(".modal-footer button")].map(b => {b.classList.add('d-none'); return b});
+
+      // ============== Save 버튼 클릭이벤트
+      //1
+      document.querySelector(".replySave").addEventListener("click", e => {
+        console.log("save button 클릭 확인")
+        //2
+        const reply = {bno}
+        console.log(reply);
+
+        e.target.closest(".modal").querySelectorAll("input[type=text]").forEach(i => console.log(reply[i.name] = i.value));
+        // document 에서부터 찾지 않고 여기서부터 찾아 올라간다
+
+        fetch("/replies", {
+          method : "POST",
+          headers : {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(reply)
+        })
+        .then(resp => resp.json())
+        .then(data => {
+          alert(data + "번 댓글이 등록");
+          myModal.hide();
+          loadJSONData(e);
+        });
+      })
+      myModal.show();
+    });
+  });
 
 </script>
+
 </html>
