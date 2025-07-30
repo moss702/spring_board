@@ -99,7 +99,7 @@
     const bno = [[${dto.bno}]];
     const listGroup = document.querySelector(".replyList");
 
-    // ========== loadJSONData : listGroup JSON 형태로 출력
+    // ========== loadJSONData : listGroup을 JSON 형태로 출력
     const loadJSONData = () => {
       fetch(`/replies/board/${bno}`)
           .then(resp => resp.json()) // JSON으로 가져옴
@@ -113,7 +113,7 @@
                     <h5 class="card-title"> ${r.text}</h5>
                     <h5 class="card-subtitle mb-2 text-muted">${r.replyer}</h5>
                     <p class="card-text"> ${dayjs(r.regDate).fromNow()}</p>
-                    <button class="replyButton btn btn-outline-secondary">수정 | 삭제</button>
+                    <!--<button class="replyButton btn btn-outline-secondary">수정 | 삭제</button>-->
                   </div>
                 </li>
               `;
@@ -121,12 +121,12 @@
           })
     };
 
-    // ========== replyCount 버튼 클릭시 댓글리스트 그룹 보여줌
+    // ========== [replyCount] 버튼 클릭시 댓글리스트 그룹 보여줌
     document.querySelector(".replyCount").addEventListener("click", loadJSONData);
 
-    // ========== 댓글 등록 : addReply 버튼 클릭시 이벤트
+    // ========== 댓글 등록 : [addReply] 버튼 클릭시 이벤트 * 모달 띄우기(visible : save, close)
     document.querySelector(".addReply").addEventListener("click", () => {
-      // 입력창 초기화
+      // 모달 입력창 초기화
       document.querySelectorAll(".modal input[type-text]").forEach(i => i.value= '');
 
       // document.querySelectorAll(".modal-footer button").forEach(b =>b.classList.add('d-none'));
@@ -135,15 +135,14 @@
           .forEach(b => b.classList.remove('d-none'));
       // [...document.querySelectorAll(".modal-footer button")].map(b => {b.classList.add('d-none'); return b});
 
-      // ============== Save 버튼 클릭이벤트
-      //1
+      // ======================= 모달 내 [Save] 버튼 클릭이벤트
       document.querySelector(".replySave").addEventListener("click", e => {
-        //2
-        const reply = {bno}
 
+        const reply = {bno}
         e.target.closest(".modal").querySelectorAll("input[type=text]").forEach(i => console.log(reply[i.name] = i.value));
         // document 에서부터 찾지 않고 여기서부터 찾아 올라간다
 
+        // fetch를 통해 POST하고 alert 출력
         fetch("/replies", {
           method : "POST",
           headers : {
@@ -161,71 +160,113 @@
       myModal.show();
     });
 
-    // ========== 댓글 수정/삭제 replyButton
+    // ========== 댓글 수정,삭제 * 모달 띄우기(visible : modify, delete, close)
     document.querySelector(".replyList").addEventListener("click", function (e){
 
-      console.log(e.target.matches(".replyButton"));
+        //----------------------- 1. 모달 input에 기존 rno 값 가져오기
+        const li = e.target.closest("li");
+        const text = li.querySelector(".card-title").innerText;
+        const replyer = li.querySelector(".card-subtitle").innerText;
 
-      if(e.target.matches(".replyButton")) {
-        const rno = e.target.closest("li").dataset.rno;
-        fetch(`../replies/${rno}`, {
-          method : "GET"
-        }).then(resp => resp.json())
-            .then(r => {
-              document.querySelector("input[name=text]").value = r.text;
-              document.querySelector("input[name=replyer]").value = r.replyer;
-              document.querySelector("input[name=rno]").value = r.rno;
-            })
-
-        // 2. 모달 띄우기 * 수정, 삭제 버튼만 띄우기 | 1번에서 가져온 rno 값 덮어씌우기
-        document.querySelectorAll(".modal input[type-text]").forEach(i => i.value= 'rno' /*여기에 기존 값 집어넣기*/);
+        document.querySelector(".modal input[name=text]").value = text;
+        document.querySelector(".modal input[name=replyer]").value = replyer;
+        document.querySelector(".modal input[name=rno]").value = li.dataset.rno;
+        //------------------------ 2. 모달에서 Save 버튼 숨기기
         [...document.querySelectorAll(".modal-footer button")]
-            .filter(b => {b.classList.add('d-none'); return b.matches('.replyClose, .replyRemove, .replyModify')})
-            .forEach(b => b.classList.remove('d-none'));
+            .filter(b => {b.classList.remove('d-none'); return b.matches('.replySave')})
+            .forEach(b => b.classList.add('d-none'));
         myModal.show();
-      }
-
-
+      // =============== 댓글 클릭시 모달 띄우기 * 수정, 삭제
+      // console.log(e.target.matches(".replyList"));
+      // if(e.target.matches(".replyList")) {
+      //   const rno = e.target.closest("li").dataset.rno;  // 클릭한 녀석과 가장 가까운 li의 rno
+      //   // 클릭한 녀석의 기존 정보 가져오기
+      //   fetch(`../replies/${rno}`, {
+      //     method : "GET"
+      //   }).then(resp => resp.json())
+      //       .then(r => {
+      //         document.querySelector("input[name=text]").value = r.text;
+      //         document.querySelector("input[name=replyer]").value = r.replyer;
+      //         document.querySelector("input[name=rno]").value = r.rno;
+      //       })
+      //   // 모달 내 수정, 삭제 버튼만 띄우기
+      //   document.querySelectorAll(".modal input[type-text]").forEach(i => i.value= 'rno' /*여기에 기존 값 집어넣기*/);
+      //   [...document.querySelectorAll(".modal-footer button")]
+      //       .filter(b => {b.classList.add('d-none'); return b.matches('.replyClose, .replyRemove, .replyModify')})
+      //       .forEach(b => b.classList.remove('d-none'));
+      //   myModal.show();
+      // }
     });
-  // ==== 삭제
-    document.querySelector(".replyRemove").addEventListener("click", _ => {
-      const rno = document.querySelector("input[name=rno]").value;
-      remove(rno);
-    })
 
-    async function remove(rno) {
-      await fetch(`../replies/${rno}`, {
-        method : "DELETE"
-      }).then(resp => resp.json())
-          .then(rno => alert(rno + "번 댓글 삭제"))
-          myModal.hide(); // 얘네 기다려주려고 async 씀
-          loadJSONData();
-    }
+    // ==== 댓글 삭제 [remove]
+    document.querySelector(".modal .replyRemove").addEventListener("click", e => {
 
-    document.querySelector(".replyModify").addEventListener("click", _ => {
-      const reply = {bno};
-      document.querySelectorAll(".modal input").forEach(i => reply[i.name] = i.value);
-      console.log(reply);
-      modify(reply);
-    })
+      const rno = document.querySelector(".modal input[name=rno]").value;
 
-    async function modify(reply) {
-      await fetch(`../replies/${reply["rno"]}`, {
-        method : "PUT",
-        headers : {
-          "Content-Type" : "application/json"
-        },
-        body: JSON.stringify(reply)
+      fetch(`/replies/${rno}`, {
+        method : "DELETE",
       })
-          .then(resp => resp.json())
-          .then(rno => alert(rno + "번 댓글 수정"))
-        myModal.hide();
-        loadJSONData();
-    }
+          .then(() => {
+            alert("댓글 삭제됨");
+            myModal.hide();
+            loadJSONData();
+          });
+    });
+  // ==== 댓글 수정 [modify]
+    document.querySelector(".modal .replyModify").addEventListener("click", e => {
+      const rno = document.querySelector(".modal input[name=rno]").value;
+      const text = document.querySelector(".modal input[name=text]").value;
+      const replyer = document.querySelector(".modal input[name=replyer]").value;
+      const reply = {rno, text, replyer, bno};
 
+      fetch(`/replies/${rno}`, {
+          method : "PUT",
+          headers : {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify(reply)
+        })
+          .then(() => {
+           alert("댓글 수정됨");
+           myModal.hide();
+           loadJSONData();
+      });
+    });
+    // ============= [REMOVE] 버튼 클릭시 삭제 이벤트
+    // document.querySelector(".replyRemove").addEventListener("click", _ => {
+    //   const rno = document.querySelector("input[name=rno]").value;
+    //   remove(rno);
+    // })
+    // async function remove(rno) {
+    //   await fetch(`../replies/${rno}`, {
+    //     method : "DELETE"
+    //   }).then(resp => resp.json())
+    //       .then(rno => alert(rno + "번 댓글 삭제"))
+    //       myModal.hide(); // 얘네 기다려주려고 async 씀
+    //       loadJSONData();
+    // }
+    // ============= [MODiFY] 버튼 클릭시 수정 이벤트
+    // document.querySelector(".replyModify").addEventListener("click", _ => {
+    //   const reply = {bno};
+    //   document.querySelectorAll(".modal input").forEach(i => reply[i.name] = i.value);
+    //   console.log(reply);
+    //   modify(reply);
+    // })
+    // async function modify(reply) {
+    //   await fetch(`../replies/${reply["rno"]}`, {
+    //     method : "PUT",
+    //     headers : {
+    //       "Content-Type" : "application/json"
+    //     },
+    //     body: JSON.stringify(reply)
+    //   })
+    //       .then(resp => resp.json())
+    //       .then(rno => alert(rno + "번 댓글 수정"))
+    //     myModal.hide();
+    //     loadJSONData();
+    // }
 
 });
-    // document.querySelector(input[name=replyer]).value(this.)
 
 
 

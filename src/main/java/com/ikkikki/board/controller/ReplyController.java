@@ -31,12 +31,6 @@ public class ReplyController {
   }
 
   // =================================
-  @PutMapping("{rno}")
-  public ResponseEntity<?> update(@RequestBody ReplyDTO dto){
-    replyService.modify(dto);
-    return ResponseEntity.ok(dto.getRno());
-  }
-
   @GetMapping("{rno}")
   public ResponseEntity<?> get(@PathVariable("rno") Long rno){
     return ResponseEntity.ok(replyService.get(rno));
@@ -45,7 +39,15 @@ public class ReplyController {
   @DeleteMapping("{rno}")
   public ResponseEntity<?> delete(@PathVariable("rno") Long rno){
     replyService.remove(rno);
-    return ResponseEntity.ok(rno);  // rno 댓글이 삭제되었다는 알람을 위해 리턴해줌
+//    // rno번 댓글이 삭제되었다는 알람을 위해 rno는 리턴해줌
+//    return ResponseEntity.ok(rno);
+    return ResponseEntity.ok("success");
+  }
+
+  @PutMapping("{rno}")
+  public ResponseEntity<?> update(@RequestBody ReplyDTO dto){
+    replyService.modify(dto);
+    return ResponseEntity.ok(dto.getRno());
   }
 
 }
