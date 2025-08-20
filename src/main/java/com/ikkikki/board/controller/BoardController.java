@@ -56,7 +56,6 @@ public class BoardController {
     rttr.addAttribute("type", dto.getType());
     rttr.addAttribute("keyword", dto.getKeyword());
     return "redirect:read";
-
   }
   
   // 글 삭제 프로세스

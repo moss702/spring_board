@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor // 필요 생성자
 @Log4j2
 @RestController
+@CrossOrigin(origins = "http://localhost:3000") //react에서 데이터 가져오려고 씀!
 @RequestMapping("replies")
 public class ReplyController {
   private final ReplyService replyService;
