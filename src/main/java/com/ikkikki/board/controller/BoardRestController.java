@@ -52,9 +52,10 @@ public class BoardRestController {
 
   // 글 삭제 프로세스
   @PostMapping("remove")
-  public ResponseEntity<?> remove(Long bno){
+  public ResponseEntity<?> remove(@RequestBody Long bno){
+    log.info("글번호 확인=====" + bno);
     service.remove(bno);
-    return ResponseEntity.ok(bno + "글이 삭제되었습니다.");
+    return ResponseEntity.ok(bno + "번 글이 삭제되었습니다.");
   }
 }
 
