@@ -45,7 +45,7 @@ public class BoardRestController {
 
   // 글 수정 프로세스
   @PostMapping("modify")
-  public ResponseEntity<?> modify(BoardDTO boardDTO){
+  public ResponseEntity<?> modify(@RequestBody BoardDTO boardDTO){
     service.modify(boardDTO);
     return ResponseEntity.ok(boardDTO.getBno());
   }
